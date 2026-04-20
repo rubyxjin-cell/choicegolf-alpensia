@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -819,10 +818,10 @@ const SUPABASE_KEY = 'YOUR_SUPABASE_ANON_KEY_HERE';  // anon key (eyJ... 로 시
 const KAKAO_CHANNEL_URL = 'https://pf.kakao.com/_choicegolf/chat';  // 실제 카톡채널 URL로 변경
 
 // Supabase 클라이언트 (연동 전까지는 null)
-let supabase = null;
+let sbClient = null;
 try {
-  if (SUPABASE_URL !== 'YOUR_SUPABASE_URL_HERE') {
-    supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+  if (SUPABASE_URL !== 'YOUR_SUPABASE_URL_HERE' && window.supabase) {
+    sbClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
   }
 } catch (e) { console.warn('Supabase 미연결', e); }
 
@@ -925,8 +924,8 @@ window.addEventListener('DOMContentLoaded', () => {
 
 async function loadProducts() {
   // Supabase 연결되면 여기서 fetch
-  // if (supabase) {
-  //   const { data, error } = await supabase.from('alpensia_products').select('*');
+  // if (sbClient) {
+  //   const { data, error } = await sbClient.from('alpensia_products').select('*');
   //   if (!error && data) currentProducts = data;
   // }
   
