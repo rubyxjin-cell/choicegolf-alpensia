@@ -1,1 +1,1252 @@
 
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="description" content="초이스골프 알펜시아 골프패키지 - 회원제·대중제 골프장 예약">
+<meta property="og:title" content="알펜시아 골프패키지 | 초이스골프">
+<meta property="og:description" content="청정 자연 속에서 즐기는 골프 라운딩. 회원제·대중제 모두 예약 가능">
+<meta property="og:type" content="website">
+<title>알펜시아 골프패키지 | 초이스골프</title>
+
+<!-- 폰트 -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Gaegu:wght@400;700&family=Noto+Serif+KR:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" />
+
+<!-- Supabase -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+:root {
+  --navy-900: #0d1b3d;
+  --navy-800: #1a2a4f;
+  --navy-700: #2a3d6e;
+  --gold: #c9a961;
+  --gold-light: #e4c97e;
+  --cream: #faf7f0;
+  --ink: #1a1a1a;
+  --gray-800: #3a3a3a;
+  --gray-600: #6b6b6b;
+  --gray-400: #b0b0b0;
+  --gray-200: #e5e5e5;
+  --gray-100: #f5f5f5;
+  --white: #ffffff;
+  --kakao: #fee500;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Pretendard Variable', Pretendard, -apple-system, sans-serif;
+  color: var(--ink);
+  background: var(--cream);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+.container { max-width: 720px; margin: 0 auto; padding: 0 20px; }
+
+/* ==================== HERO ==================== */
+.hero {
+  position: relative;
+  background: linear-gradient(135deg, var(--navy-900) 0%, var(--navy-800) 50%, var(--navy-700) 100%);
+  color: var(--white);
+  padding: 60px 20px 70px;
+  overflow: hidden;
+}
+
+.hero::before {
+  content: '';
+  position: absolute;
+  top: -50%; right: -30%;
+  width: 500px; height: 500px;
+  background: radial-gradient(circle, rgba(201,169,97,0.15) 0%, transparent 70%);
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.hero::after {
+  content: '';
+  position: absolute;
+  bottom: -100px; left: -20%;
+  width: 400px; height: 400px;
+  background: radial-gradient(circle, rgba(201,169,97,0.08) 0%, transparent 70%);
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.hero-inner { position: relative; z-index: 2; text-align: center; }
+
+.hero-brand {
+  font-family: 'Gaegu', cursive;
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--gold-light);
+  letter-spacing: 2px;
+  margin-bottom: 8px;
+  opacity: 0;
+  animation: fadeUp 0.8s 0.1s forwards;
+}
+
+.hero-title {
+  font-family: 'Noto Serif KR', serif;
+  font-size: 34px;
+  font-weight: 700;
+  line-height: 1.3;
+  margin-bottom: 16px;
+  letter-spacing: -0.5px;
+  opacity: 0;
+  animation: fadeUp 0.8s 0.3s forwards;
+}
+
+.hero-title .accent {
+  color: var(--gold-light);
+  display: block;
+  font-size: 20px;
+  font-weight: 500;
+  margin-top: 8px;
+  letter-spacing: 1px;
+}
+
+.hero-sub {
+  font-size: 15px;
+  line-height: 1.8;
+  color: rgba(255,255,255,0.85);
+  max-width: 420px;
+  margin: 0 auto 24px;
+  opacity: 0;
+  animation: fadeUp 0.8s 0.5s forwards;
+}
+
+.hero-badges {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  opacity: 0;
+  animation: fadeUp 0.8s 0.7s forwards;
+}
+
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 14px;
+  background: rgba(201,169,97,0.15);
+  border: 1px solid rgba(201,169,97,0.4);
+  color: var(--gold-light);
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: 20px;
+  backdrop-filter: blur(10px);
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ==================== 상품 목록 ==================== */
+.section-header {
+  text-align: center;
+  padding: 50px 0 30px;
+}
+
+.section-label {
+  font-family: 'Gaegu', cursive;
+  font-size: 16px;
+  color: var(--gold);
+  letter-spacing: 3px;
+  margin-bottom: 8px;
+}
+
+.section-title {
+  font-family: 'Noto Serif KR', serif;
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--navy-900);
+  letter-spacing: -0.5px;
+}
+
+.section-divider {
+  width: 40px;
+  height: 2px;
+  background: var(--gold);
+  margin: 14px auto 0;
+}
+
+.products {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding-bottom: 50px;
+}
+
+.product-card {
+  background: var(--white);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(13,27,61,0.08);
+  cursor: pointer;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  position: relative;
+}
+
+.product-card:active {
+  transform: scale(0.98);
+}
+
+.product-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 30px rgba(13,27,61,0.15);
+}
+
+.product-card-image {
+  width: 100%;
+  height: 200px;
+  background: linear-gradient(135deg, var(--navy-800), var(--navy-700));
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--gold-light);
+  font-size: 48px;
+}
+
+.product-card-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.product-tag {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  background: var(--gold);
+  color: var(--navy-900);
+  font-size: 11px;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 4px;
+  letter-spacing: 1px;
+  z-index: 2;
+}
+
+.product-card-body {
+  padding: 20px 22px 22px;
+}
+
+.product-number {
+  font-family: 'Gaegu', cursive;
+  font-size: 14px;
+  color: var(--gold);
+  font-weight: 700;
+  letter-spacing: 1px;
+  margin-bottom: 4px;
+}
+
+.product-name {
+  font-family: 'Noto Serif KR', serif;
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--navy-900);
+  line-height: 1.4;
+  margin-bottom: 12px;
+}
+
+.product-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 13px;
+  color: var(--gray-600);
+  margin-bottom: 14px;
+  padding-top: 14px;
+  border-top: 1px solid var(--gray-200);
+}
+
+.product-meta-row { display: flex; gap: 8px; }
+.product-meta-label { color: var(--navy-800); font-weight: 600; min-width: 60px; }
+
+.product-cta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 14px;
+  border-top: 1px dashed var(--gray-200);
+  color: var(--navy-800);
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.product-cta-arrow {
+  transition: transform 0.3s ease;
+}
+
+.product-card:hover .product-cta-arrow {
+  transform: translateX(4px);
+}
+
+/* ==================== 상세 화면 ==================== */
+.detail-view { display: none; }
+.detail-view.active { display: block; }
+.list-view.hidden { display: none; }
+
+.detail-back {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: var(--white);
+  border-bottom: 1px solid var(--gray-200);
+  padding: 14px 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--navy-800);
+  cursor: pointer;
+  width: 100%;
+  border: none;
+  border-bottom: 1px solid var(--gray-200);
+  text-align: left;
+}
+
+.detail-back:active { background: var(--gray-100); }
+
+.detail-hero {
+  background: linear-gradient(135deg, var(--navy-900), var(--navy-800));
+  color: var(--white);
+  padding: 40px 20px 50px;
+  position: relative;
+  overflow: hidden;
+}
+
+.detail-hero::before {
+  content: '';
+  position: absolute;
+  top: 0; right: 0;
+  width: 300px; height: 300px;
+  background: radial-gradient(circle, rgba(201,169,97,0.12) 0%, transparent 70%);
+}
+
+.detail-hero-inner { position: relative; z-index: 2; }
+
+.detail-hero-tag {
+  display: inline-block;
+  font-family: 'Gaegu', cursive;
+  font-size: 14px;
+  color: var(--gold-light);
+  letter-spacing: 2px;
+  margin-bottom: 10px;
+}
+
+.detail-hero-title {
+  font-family: 'Noto Serif KR', serif;
+  font-size: 26px;
+  font-weight: 700;
+  line-height: 1.4;
+  margin-bottom: 16px;
+}
+
+.detail-hero-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 14px;
+  color: rgba(255,255,255,0.9);
+  padding-top: 16px;
+  border-top: 1px solid rgba(255,255,255,0.2);
+}
+
+.detail-hero-meta-row { display: flex; gap: 10px; }
+.detail-hero-meta-label { color: var(--gold-light); min-width: 70px; font-weight: 600; }
+
+/* ==================== 상세 섹션 공통 ==================== */
+.detail-section {
+  padding: 40px 20px;
+  background: var(--white);
+  border-bottom: 8px solid var(--cream);
+}
+
+.detail-section-title {
+  font-family: 'Noto Serif KR', serif;
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--navy-900);
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.detail-section-title::before {
+  content: '';
+  width: 4px;
+  height: 22px;
+  background: var(--gold);
+  border-radius: 2px;
+}
+
+/* ==================== 호텔 / 골프장 소개 ==================== */
+.info-card {
+  background: var(--cream);
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 14px;
+}
+
+.info-card:last-child { margin-bottom: 0; }
+
+.info-card-photos {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.info-card-photo {
+  aspect-ratio: 4/3;
+  background: linear-gradient(135deg, var(--navy-700), var(--navy-800));
+  border-radius: 8px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--gold-light);
+  font-size: 32px;
+}
+
+.info-card-photo img { width: 100%; height: 100%; object-fit: cover; }
+
+.info-card-name {
+  font-family: 'Noto Serif KR', serif;
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--navy-900);
+  margin-bottom: 6px;
+}
+
+.info-card-desc {
+  font-size: 14px;
+  line-height: 1.7;
+  color: var(--gray-800);
+}
+
+/* ==================== 달력 ==================== */
+.calendar {
+  background: var(--cream);
+  border-radius: 12px;
+  padding: 20px;
+}
+
+.calendar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.calendar-nav {
+  width: 36px; height: 36px;
+  background: var(--white);
+  border: 1px solid var(--gray-200);
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 16px;
+  color: var(--navy-800);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.calendar-nav:active { background: var(--gray-100); transform: scale(0.9); }
+.calendar-nav:disabled { opacity: 0.3; cursor: not-allowed; }
+
+.calendar-month {
+  font-family: 'Noto Serif KR', serif;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--navy-900);
+}
+
+.calendar-weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+  margin-bottom: 8px;
+}
+
+.calendar-weekday {
+  text-align: center;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--gray-600);
+  padding: 8px 0;
+}
+
+.calendar-weekday.sun { color: #d64545; }
+.calendar-weekday.sat { color: #3b7cbf; }
+
+.calendar-days {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+}
+
+.calendar-day {
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: 500;
+  border-radius: 8px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  color: var(--ink);
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.calendar-day.empty { visibility: hidden; }
+.calendar-day.disabled { color: var(--gray-400); cursor: not-allowed; }
+.calendar-day.available { background: var(--white); color: var(--navy-900); font-weight: 600; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+.calendar-day.available:active { transform: scale(0.95); }
+.calendar-day.available.sun { color: #d64545; }
+.calendar-day.available.sat { color: #3b7cbf; }
+.calendar-day.selected { background: var(--navy-800); color: var(--white) !important; box-shadow: 0 4px 12px rgba(13,27,61,0.3); }
+
+.calendar-legend {
+  display: flex;
+  gap: 16px;
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px solid var(--gray-200);
+  font-size: 12px;
+  color: var(--gray-600);
+}
+
+.calendar-legend-item { display: flex; align-items: center; gap: 6px; }
+.calendar-legend-dot { width: 12px; height: 12px; border-radius: 50%; }
+.legend-available { background: var(--white); border: 1px solid var(--gray-200); }
+.legend-selected { background: var(--navy-800); }
+
+/* ==================== 요금 카드 ==================== */
+.price-card {
+  background: linear-gradient(135deg, var(--navy-900), var(--navy-800));
+  color: var(--white);
+  border-radius: 12px;
+  padding: 24px 20px;
+  margin-top: 16px;
+  display: none;
+  position: relative;
+  overflow: hidden;
+}
+
+.price-card.show { display: block; animation: slideUp 0.4s ease; }
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.price-card::before {
+  content: '';
+  position: absolute;
+  top: -50px; right: -50px;
+  width: 150px; height: 150px;
+  background: radial-gradient(circle, rgba(201,169,97,0.2) 0%, transparent 70%);
+}
+
+.price-card-inner { position: relative; z-index: 2; }
+
+.price-date {
+  font-family: 'Gaegu', cursive;
+  font-size: 14px;
+  color: var(--gold-light);
+  letter-spacing: 1px;
+  margin-bottom: 8px;
+}
+
+.price-label {
+  font-size: 13px;
+  color: rgba(255,255,255,0.8);
+  margin-bottom: 4px;
+}
+
+.price-toggle {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+  background: rgba(255,255,255,0.1);
+  border-radius: 8px;
+  padding: 4px;
+}
+
+.price-toggle-btn {
+  flex: 1;
+  padding: 10px;
+  border: none;
+  background: transparent;
+  color: rgba(255,255,255,0.7);
+  font-size: 13px;
+  font-weight: 600;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.price-toggle-btn.active {
+  background: var(--gold);
+  color: var(--navy-900);
+}
+
+.price-amount {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.price-amount-value {
+  font-family: 'Noto Serif KR', serif;
+  font-size: 36px;
+  font-weight: 700;
+  color: var(--gold-light);
+}
+
+.price-amount-unit { font-size: 14px; color: rgba(255,255,255,0.7); }
+
+.price-note {
+  font-size: 12px;
+  color: rgba(255,255,255,0.6);
+  margin-bottom: 20px;
+}
+
+.kakao-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 16px;
+  background: var(--kakao);
+  color: #3c1e1e;
+  border: none;
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  text-decoration: none;
+  transition: transform 0.2s ease;
+}
+
+.kakao-btn:active { transform: scale(0.98); }
+
+.kakao-icon {
+  width: 20px; height: 20px;
+  background: #3c1e1e;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--kakao);
+  font-size: 12px;
+  font-weight: 900;
+}
+
+/* ==================== 포함사항 ==================== */
+.include-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.include-list li {
+  display: flex;
+  gap: 10px;
+  font-size: 14px;
+  color: var(--gray-800);
+  line-height: 1.7;
+}
+
+.include-list li::before {
+  content: '✓';
+  color: var(--gold);
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+/* ==================== Footer ==================== */
+.footer {
+  background: var(--navy-900);
+  color: rgba(255,255,255,0.7);
+  padding: 40px 20px;
+  text-align: center;
+  font-size: 13px;
+  line-height: 1.8;
+}
+
+.footer-brand {
+  font-family: 'Gaegu', cursive;
+  font-size: 20px;
+  color: var(--gold-light);
+  margin-bottom: 10px;
+  letter-spacing: 2px;
+}
+
+.footer-contact {
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px solid rgba(255,255,255,0.1);
+  font-size: 12px;
+}
+
+/* ==================== Loading / Empty ==================== */
+.loading {
+  padding: 60px 20px;
+  text-align: center;
+  color: var(--gray-600);
+  font-size: 14px;
+}
+
+.loading-spinner {
+  width: 32px; height: 32px;
+  border: 3px solid var(--gray-200);
+  border-top-color: var(--gold);
+  border-radius: 50%;
+  margin: 0 auto 12px;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ==================== Mobile ==================== */
+@media (max-width: 480px) {
+  .hero { padding: 50px 20px 60px; }
+  .hero-title { font-size: 28px; }
+  .hero-title .accent { font-size: 18px; }
+  .section-title { font-size: 22px; }
+  .detail-hero-title { font-size: 22px; }
+  .product-name { font-size: 18px; }
+  .price-amount-value { font-size: 30px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ============ 상품 목록 화면 ============ -->
+<section class="list-view" id="listView">
+
+  <div class="hero">
+    <div class="hero-inner container">
+      <div class="hero-brand">CHOICE GOLF</div>
+      <h1 class="hero-title">
+        알펜시아 골프패키지
+        <span class="accent">2026 시즌 예약 오픈</span>
+      </h1>
+      <p class="hero-sub">
+        청정 자연 속에서 즐기는 골프 라운딩<br>
+        알펜시아 리조트에서의 여유로운 휴식
+      </p>
+      <div class="hero-badges">
+        <span class="hero-badge">✓ 회원제 예약 가능</span>
+        <span class="hero-badge">✓ 대중제 예약 가능</span>
+        <span class="hero-badge">✓ 6월까지 사전예약</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="section-header">
+      <div class="section-label">ALPENSIA PACKAGES</div>
+      <h2 class="section-title">골프패키지 상품</h2>
+      <div class="section-divider"></div>
+    </div>
+
+    <div class="products" id="productsList">
+      <!-- 상품 카드들이 JS로 렌더링됩니다 -->
+      <div class="loading">
+        <div class="loading-spinner"></div>
+        상품을 불러오는 중...
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <div class="footer-brand">CHOICE GOLF</div>
+    <div>주식회사 초이스골프</div>
+    <div>해외골프투어 · 국내골프예약 전문</div>
+    <div class="footer-contact">
+      문의: 카카오톡채널 @초이스골프
+    </div>
+  </div>
+</section>
+
+<!-- ============ 상세 화면 ============ -->
+<section class="detail-view" id="detailView">
+  <button class="detail-back" onclick="showList()">
+    <span>←</span> <span>상품 목록으로</span>
+  </button>
+
+  <div id="detailContent">
+    <!-- 상세 내용이 JS로 렌더링됩니다 -->
+  </div>
+
+  <div class="footer">
+    <div class="footer-brand">CHOICE GOLF</div>
+    <div>문의: 카카오톡채널 @초이스골프</div>
+  </div>
+</section>
+
+<script>
+// ==================== 설정 ====================
+// ⚠️ 여기에 실제 값을 넣으세요
+const SUPABASE_URL = 'YOUR_SUPABASE_URL_HERE';       // domestic-golf Supabase URL
+const SUPABASE_KEY = 'YOUR_SUPABASE_ANON_KEY_HERE';  // anon key (eyJ... 로 시작)
+const KAKAO_CHANNEL_URL = 'https://pf.kakao.com/_choicegolf/chat';  // 실제 카톡채널 URL로 변경
+
+// Supabase 클라이언트 (연동 전까지는 null)
+let supabase = null;
+try {
+  if (SUPABASE_URL !== 'YOUR_SUPABASE_URL_HERE') {
+    supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+  }
+} catch (e) { console.warn('Supabase 미연결', e); }
+
+// ==================== 샘플 상품 데이터 ====================
+// 나중에 Supabase 테이블로 이전 예정
+const SAMPLE_PRODUCTS = [
+  {
+    id: 1,
+    tag: '특가',
+    number: 'PACKAGE 01',
+    name: '2026 알펜시아 특가 골프 패키지',
+    mainImage: null,  // 이미지 URL (나중에 Supabase Storage)
+    mainEmoji: '⛳',
+    period: '2026.3.7 ~ 4.30',
+    periodNote: '※ 대중제는 3/13 오픈',
+    included: '객실 + 그린피 + 클럽하우스 조식&커피',
+    weekdays: [0, 1, 2, 3, 4, 5, 6],  // 0=일 ~ 6=토 (전체)
+    excludeDates: [],  // 제외일
+    hotels: [
+      {
+        name: '인터컨티넨탈 알펜시아',
+        desc: '알펜시아 리조트 내 최고급 호텔. 스키장과 골프장 전망의 스탠다드 객실 제공.',
+        photos: ['🏨']
+      }
+    ],
+    golfCourses: [
+      {
+        name: '알펜시아 700CC (회원제)',
+        desc: '해발 700m 고지대에 위치한 명품 회원제 코스. 18홀 챔피언십 코스.',
+        photos: ['⛳']
+      },
+      {
+        name: '알펜시아 퍼블릭 (대중제)',
+        desc: '누구나 즐길 수 있는 9홀 대중제 코스. 3/13 오픈.',
+        photos: ['🏌️']
+      }
+    ],
+    includes: [
+      '객실 1박 (스탠다드 기준)',
+      '그린피 (카트비 별도)',
+      '클럽하우스 조식 & 커피',
+      '부대시설 할인 쿠폰'
+    ],
+    // 샘플 요금 (나중에 domestic-golf의 시즌요금 로직으로 대체)
+    prices: {
+      member: { weekday: 290000, weekend: 380000 },
+      public: { weekday: 220000, weekend: 290000 }
+    }
+  },
+  {
+    id: 2,
+    tag: '럭셔리',
+    number: 'PACKAGE 02',
+    name: '알펜시아 CC 2인 라운드 럭셔리 패키지',
+    mainImage: null,
+    mainEmoji: '🏌️',
+    period: '2026.2.28 ~ 4.9',
+    periodNote: '※ 일~목 한정',
+    included: '스탠다드 객실 1박 + 회원제 18홀 또는 36홀 + 조식 2인',
+    weekdays: [0, 1, 2, 3, 4],  // 일~목 (0=일, 4=목)
+    excludeDates: [],
+    hotels: [
+      {
+        name: '인터컨티넨탈 스탠다드',
+        desc: '인터컨티넨탈 알펜시아 스탠다드 객실 1박. 2인 기준.',
+        photos: ['🏨']
+      }
+    ],
+    golfCourses: [
+      {
+        name: '알펜시아 회원제 골프장',
+        desc: '회원제 전용 18홀 또는 36홀 라운드. 프리미엄 라운딩 경험.',
+        photos: ['⛳']
+      }
+    ],
+    includes: [
+      '인터컨티넨탈 스탠다드 객실 1박',
+      '회원제 골프장 18홀 또는 36홀 라운드 (2인)',
+      '플레이버스 조식 2인',
+      '부대시설 10% 할인'
+    ],
+    prices: {
+      member: { weekday: 450000, weekend: 580000 },
+      public: null  // 이 상품은 회원제만
+    }
+  }
+];
+
+// ==================== 상태 ====================
+let currentProducts = SAMPLE_PRODUCTS;
+let currentProduct = null;
+let currentMonth = new Date(2026, 2, 1);  // 2026년 3월 기본
+let selectedDate = null;
+let priceType = 'member';  // 'member' or 'public'
+
+// ==================== 초기 로드 ====================
+window.addEventListener('DOMContentLoaded', () => {
+  loadProducts();
+});
+
+async function loadProducts() {
+  // Supabase 연결되면 여기서 fetch
+  // if (supabase) {
+  //   const { data, error } = await supabase.from('alpensia_products').select('*');
+  //   if (!error && data) currentProducts = data;
+  // }
+  
+  renderProducts();
+}
+
+// ==================== 상품 목록 렌더링 ====================
+function renderProducts() {
+  const listEl = document.getElementById('productsList');
+  
+  if (!currentProducts || currentProducts.length === 0) {
+    listEl.innerHTML = '<div class="loading">등록된 상품이 없습니다.</div>';
+    return;
+  }
+  
+  listEl.innerHTML = currentProducts.map(p => `
+    <div class="product-card" onclick="showDetail(${p.id})">
+      <div class="product-card-image">
+        ${p.tag ? `<span class="product-tag">${p.tag}</span>` : ''}
+        ${p.mainImage ? `<img src="${p.mainImage}" alt="${p.name}">` : `<span>${p.mainEmoji || '⛳'}</span>`}
+      </div>
+      <div class="product-card-body">
+        <div class="product-number">${p.number}</div>
+        <div class="product-name">${p.name}</div>
+        <div class="product-meta">
+          <div class="product-meta-row">
+            <span class="product-meta-label">이용기간</span>
+            <span>${p.period}</span>
+          </div>
+          <div class="product-meta-row">
+            <span class="product-meta-label">구성</span>
+            <span>${p.included}</span>
+          </div>
+        </div>
+        <div class="product-cta">
+          <span>자세히 보기 · 예약 가능일 확인</span>
+          <span class="product-cta-arrow">→</span>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+// ==================== 상세 화면 ====================
+function showDetail(productId) {
+  currentProduct = currentProducts.find(p => p.id === productId);
+  if (!currentProduct) return;
+  
+  // 기본값 설정
+  selectedDate = null;
+  priceType = currentProduct.prices.member ? 'member' : 'public';
+  
+  // 달력 시작월: 상품 이용기간 첫 날
+  const [startYear, startMonth] = currentProduct.period.split('~')[0].trim().split('.');
+  currentMonth = new Date(parseInt(startYear), parseInt(startMonth) - 1, 1);
+  
+  renderDetail();
+  
+  document.getElementById('listView').classList.add('hidden');
+  document.getElementById('detailView').classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+function showList() {
+  document.getElementById('detailView').classList.remove('active');
+  document.getElementById('listView').classList.remove('hidden');
+  window.scrollTo(0, 0);
+}
+
+function renderDetail() {
+  const p = currentProduct;
+  const el = document.getElementById('detailContent');
+  
+  el.innerHTML = `
+    <!-- 상세 HERO -->
+    <div class="detail-hero">
+      <div class="detail-hero-inner container">
+        <div class="detail-hero-tag">${p.number}</div>
+        <h1 class="detail-hero-title">${p.name}</h1>
+        <div class="detail-hero-meta">
+          <div class="detail-hero-meta-row">
+            <span class="detail-hero-meta-label">이용기간</span>
+            <span>${p.period}</span>
+          </div>
+          ${p.periodNote ? `
+          <div class="detail-hero-meta-row">
+            <span class="detail-hero-meta-label">안내</span>
+            <span>${p.periodNote}</span>
+          </div>` : ''}
+          <div class="detail-hero-meta-row">
+            <span class="detail-hero-meta-label">구성</span>
+            <span>${p.included}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- 호텔 소개 -->
+    <div class="detail-section">
+      <div class="container">
+        <h2 class="detail-section-title">호텔 소개</h2>
+        ${p.hotels.map(h => `
+          <div class="info-card">
+            <div class="info-card-photos">
+              ${h.photos.map(ph => `
+                <div class="info-card-photo">
+                  ${typeof ph === 'string' && ph.startsWith('http') ? `<img src="${ph}">` : `<span>${ph}</span>`}
+                </div>
+              `).join('')}
+            </div>
+            <div class="info-card-name">${h.name}</div>
+            <div class="info-card-desc">${h.desc}</div>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+    
+    <!-- 골프장 소개 -->
+    <div class="detail-section">
+      <div class="container">
+        <h2 class="detail-section-title">골프장 소개</h2>
+        ${p.golfCourses.map(g => `
+          <div class="info-card">
+            <div class="info-card-photos">
+              ${g.photos.map(ph => `
+                <div class="info-card-photo">
+                  ${typeof ph === 'string' && ph.startsWith('http') ? `<img src="${ph}">` : `<span>${ph}</span>`}
+                </div>
+              `).join('')}
+            </div>
+            <div class="info-card-name">${g.name}</div>
+            <div class="info-card-desc">${g.desc}</div>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+    
+    <!-- 포함사항 -->
+    <div class="detail-section">
+      <div class="container">
+        <h2 class="detail-section-title">포함사항</h2>
+        <ul class="include-list">
+          ${p.includes.map(i => `<li>${i}</li>`).join('')}
+        </ul>
+      </div>
+    </div>
+    
+    <!-- 달력 -->
+    <div class="detail-section">
+      <div class="container">
+        <h2 class="detail-section-title">출발일 선택</h2>
+        <div class="calendar" id="calendar"></div>
+        <div id="priceCardWrap"></div>
+      </div>
+    </div>
+  `;
+  
+  renderCalendar();
+}
+
+// ==================== 달력 ====================
+function renderCalendar() {
+  const p = currentProduct;
+  const year = currentMonth.getFullYear();
+  const month = currentMonth.getMonth();
+  
+  // 상품 이용기간 파싱
+  const [startStr, endStr] = p.period.split('~').map(s => s.trim());
+  const [sy, sm, sd] = startStr.split('.').map(Number);
+  const [ey, em, ed] = endStr.split('.').map(Number);
+  const startDate = new Date(sy, sm - 1, sd);
+  const endDate = new Date(ey, em - 1, ed);
+  
+  // 첫 날과 마지막 날
+  const firstDay = new Date(year, month, 1);
+  const lastDay = new Date(year, month + 1, 0);
+  const startWeekday = firstDay.getDay();
+  const daysInMonth = lastDay.getDate();
+  
+  // 이전/다음 버튼 활성화 여부
+  const prevMonth = new Date(year, month - 1, 1);
+  const nextMonth = new Date(year, month + 1, 1);
+  const prevDisabled = prevMonth < new Date(startDate.getFullYear(), startDate.getMonth(), 1);
+  const nextDisabled = nextMonth > new Date(endDate.getFullYear(), endDate.getMonth(), 1);
+  
+  const monthNames = ['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'];
+  
+  let html = `
+    <div class="calendar-header">
+      <button class="calendar-nav" onclick="changeMonth(-1)" ${prevDisabled ? 'disabled' : ''}>‹</button>
+      <div class="calendar-month">${year}년 ${monthNames[month]}</div>
+      <button class="calendar-nav" onclick="changeMonth(1)" ${nextDisabled ? 'disabled' : ''}>›</button>
+    </div>
+    <div class="calendar-weekdays">
+      <div class="calendar-weekday sun">일</div>
+      <div class="calendar-weekday">월</div>
+      <div class="calendar-weekday">화</div>
+      <div class="calendar-weekday">수</div>
+      <div class="calendar-weekday">목</div>
+      <div class="calendar-weekday">금</div>
+      <div class="calendar-weekday sat">토</div>
+    </div>
+    <div class="calendar-days">
+  `;
+  
+  // 빈 칸
+  for (let i = 0; i < startWeekday; i++) {
+    html += '<div class="calendar-day empty"></div>';
+  }
+  
+  // 날짜
+  for (let d = 1; d <= daysInMonth; d++) {
+    const date = new Date(year, month, d);
+    const weekday = date.getDay();
+    const dateStr = `${year}-${String(month+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    
+    const inRange = date >= startDate && date <= endDate;
+    const weekdayOk = p.weekdays.includes(weekday);
+    const notExcluded = !p.excludeDates.includes(dateStr);
+    const available = inRange && weekdayOk && notExcluded;
+    const isSelected = selectedDate === dateStr;
+    
+    let cls = 'calendar-day';
+    if (available) cls += ' available';
+    else cls += ' disabled';
+    if (weekday === 0) cls += ' sun';
+    if (weekday === 6) cls += ' sat';
+    if (isSelected) cls += ' selected';
+    
+    const onclick = available ? `onclick="selectDate('${dateStr}')"` : '';
+    html += `<button class="${cls}" ${onclick} ${!available ? 'disabled' : ''}>${d}</button>`;
+  }
+  
+  html += `
+    </div>
+    <div class="calendar-legend">
+      <div class="calendar-legend-item">
+        <span class="calendar-legend-dot legend-available"></span> 예약가능
+      </div>
+      <div class="calendar-legend-item">
+        <span class="calendar-legend-dot legend-selected"></span> 선택됨
+      </div>
+    </div>
+  `;
+  
+  document.getElementById('calendar').innerHTML = html;
+}
+
+function changeMonth(delta) {
+  currentMonth = new Date(currentMonth.getFullYear(), currentMonth.getMonth() + delta, 1);
+  renderCalendar();
+}
+
+function selectDate(dateStr) {
+  selectedDate = dateStr;
+  renderCalendar();
+  renderPriceCard();
+}
+
+// ==================== 요금 카드 ====================
+function renderPriceCard() {
+  if (!selectedDate) return;
+  
+  const p = currentProduct;
+  const date = new Date(selectedDate);
+  const weekday = date.getDay();
+  const isWeekend = weekday === 0 || weekday === 6 || weekday === 5;  // 금토일 주말 처리
+  
+  const hasMember = !!p.prices.member;
+  const hasPublic = !!p.prices.public;
+  
+  // 현재 선택된 요금 타입이 가능한지 확인
+  if (priceType === 'member' && !hasMember) priceType = 'public';
+  if (priceType === 'public' && !hasPublic) priceType = 'member';
+  
+  const priceData = p.prices[priceType];
+  const price = isWeekend ? priceData.weekend : priceData.weekday;
+  
+  const weekdayNames = ['일','월','화','수','목','금','토'];
+  const dateDisplay = `${date.getFullYear()}년 ${date.getMonth()+1}월 ${date.getDate()}일 (${weekdayNames[weekday]})`;
+  
+  const html = `
+    <div class="price-card show">
+      <div class="price-card-inner">
+        <div class="price-date">${dateDisplay}</div>
+        
+        ${hasMember && hasPublic ? `
+        <div class="price-toggle">
+          <button class="price-toggle-btn ${priceType === 'member' ? 'active' : ''}" onclick="togglePriceType('member')">회원제</button>
+          <button class="price-toggle-btn ${priceType === 'public' ? 'active' : ''}" onclick="togglePriceType('public')">대중제</button>
+        </div>
+        ` : ''}
+        
+        <div class="price-label">${priceType === 'member' ? '회원제' : '대중제'} · ${isWeekend ? '주말요금' : '평일요금'} · 1인 기준</div>
+        <div class="price-amount">
+          <span class="price-amount-value">${price.toLocaleString()}</span>
+          <span class="price-amount-unit">원~</span>
+        </div>
+        <div class="price-note">* 정확한 요금은 카톡 문의 시 확정됩니다</div>
+        
+        <a href="${KAKAO_CHANNEL_URL}" target="_blank" class="kakao-btn">
+          <span class="kakao-icon">K</span>
+          <span>카카오톡으로 바로 문의하기</span>
+        </a>
+      </div>
+    </div>
+  `;
+  
+  document.getElementById('priceCardWrap').innerHTML = html;
+  // 요금 카드로 부드럽게 스크롤
+  setTimeout(() => {
+    document.querySelector('.price-card').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }, 100);
+}
+
+function togglePriceType(type) {
+  priceType = type;
+  renderPriceCard();
+}
+</script>
+
+</body>
+</html>
